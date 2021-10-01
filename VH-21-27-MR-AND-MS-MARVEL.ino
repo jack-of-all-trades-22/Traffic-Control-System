@@ -1,7 +1,8 @@
 #include<LiquidCrystal.h>
-
+#include <Servo.h>
 LiquidCrystal lcd(11,12,2,3,4,5);
-
+Servo servo10;
+int breaker=A5;
 const int trigpin=9;
 const int echopin=8;
 float interval,dist;
@@ -11,17 +12,23 @@ int gled=13;
   
 void setup()
 {
+  pinMode(10,INPUT);
+  pinMode(A5,OUTPUT);
   pinMode(trigpin, OUTPUT);
   pinMode(echopin, INPUT);
   lcd.begin(16,2);
   pinMode(rled, OUTPUT);
   pinMode(yled, OUTPUT);
-  pinMode(gled, OUTPUT);
-   
+  pinMode(gled,OUTPUT);
+  servo10.attach(breaker);
+  servo10.write(0);
+  Serial.begin(9600);
 }
 
 void loop()
 {
+  int a = digitalRead(10);
+  Serial.println(a);
   digitalWrite(trigpin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigpin, HIGH);
@@ -30,43 +37,61 @@ void loop()
   interval = pulseIn(echopin, HIGH);
   
   dist = (interval*.0343)/2;
-  
-    
- lcd.setCursor(0,0); 
- lcd.print("Distance");
- lcd.print(dist);
-  
   if (dist<100)
   {
+        
     lcd.println("STOP");
     digitalWrite(rled, HIGH);
-  }
-  
-  else 
-  {
-    digitalWrite(rled, LOW);
-  }
-  
-  if (dist<150)
-  {
-    lcd.println("SLOW");
-    digitalWrite(yled, HIGH);
-  }
-  
-   else 
-  {
     digitalWrite(yled, LOW);
+    digitalWrite(gled, LOW);
+    servo10.write(0);
+    delay(20);
+    lcd.clear();
+    if( a==1)
+    {
+      digitalWrite(rled, HIGH);
+      lcd.setCursor(0,0);
+      lcd.println("Cross the Road");
+      delay(2000);
+      lcd.clear();
+      digitalWrite(gled, HIGH);
+      lcd.println("Now You Start");
+      delay(2000);
+    }
   }
-  
-  if (dist>150)
+  else if (dist<150)
+  {
+    lcd.println("Slow");
+      digitalWrite(yled, HIGH);
+      digitalWrite(rled, LOW);
+      digitalWrite(gled,LOW);
+      servo10.write(90);
+      delay(2000);
+      lcd.clear();
+    if( a==1)
+    {
+      digitalWrite(yled,HIGH);
+      lcd.setCursor(0,0);
+      lcd.println("Zeebra Time");
+      delay(2000);
+      lcd.clear();
+    }
+   }
+  else if (dist>150)
   {
     lcd.println("PROCEED");
     digitalWrite(gled, HIGH);
+    digitalWrite(yled, LOW);
+    digitalWrite(rled,LOW);
+    delay(20);
+    servo10.write(0);
+    delay(20);
+    lcd.clear();
   }
   
    else 
   {
-    digitalWrite(gled, LOW);
+    digitalWrite(gled, HIGH);
   }
   
    
