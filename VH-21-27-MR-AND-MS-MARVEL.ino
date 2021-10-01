@@ -39,7 +39,7 @@ void loop()
   dist = (interval*.0343)/2;
   if (dist<100)
   {
-        
+    bailout:    
     lcd.println("STOP");
     digitalWrite(rled, HIGH);
     digitalWrite(yled, LOW);
@@ -55,11 +55,12 @@ void loop()
       delay(2000);
       lcd.clear();
       digitalWrite(gled, HIGH);
-      lcd.println("Now You Start");
+      lcd.println("Now Proceed");
       delay(2000);
     }
+      
   }
-  else if (dist<150)
+  else if (dist>100 && dist<200)
   {
     lcd.println("Slow");
       digitalWrite(yled, HIGH);
@@ -76,8 +77,9 @@ void loop()
       delay(2000);
       lcd.clear();
     }
+    goto bailout;
    }
-  else if (dist>150)
+  else if (dist>200)
   {
     lcd.println("PROCEED");
     digitalWrite(gled, HIGH);
@@ -91,7 +93,7 @@ void loop()
   
    else 
   {
-    digitalWrite(gled, HIGH);
+    digitalWrite(gled, LOW);
   }
   
    
