@@ -9,7 +9,8 @@ float interval,dist;
 int rled=6;
 int yled=7;
 int gled=13;
-  
+int c=0;
+int spd;  
 void setup()
 {
   pinMode(10,INPUT);
@@ -37,9 +38,9 @@ void loop()
   interval = pulseIn(echopin, HIGH);
   
   dist = (interval*.0343)/2;
+  spd= dist/interval;
   if (dist<100)
-  {
-    bailout:    
+  {    
     lcd.println("STOP");
     digitalWrite(rled, HIGH);
     digitalWrite(yled, LOW);
@@ -56,6 +57,9 @@ void loop()
       lcd.clear();
       digitalWrite(gled, HIGH);
       lcd.println("Now Proceed");
+      c=c+a;
+      Serial.println("Two Wheeler Count:");
+      Serial.print(c);
       delay(2000);
     }
       
@@ -73,14 +77,16 @@ void loop()
     {
       digitalWrite(yled,HIGH);
       lcd.setCursor(0,0);
-      lcd.println("Zeebra Time");
+      c=c+a;
+      Serial.println("Two Wheeler Count:");
+      Serial.print(c);
       delay(2000);
       lcd.clear();
     }
-    goto bailout;
    }
   else if (dist>200)
   {
+  
     lcd.println("PROCEED");
     digitalWrite(gled, HIGH);
     digitalWrite(yled, LOW);
